@@ -22,6 +22,7 @@ function _init()
         landed=false
     }
     bullets = {}
+    enemy_bullets={}
     enemies = {}
     gravity=0.2
     friction=0.85
@@ -86,6 +87,21 @@ function shoot(flp)
     add(bullets,b)
 end
 
+function enemy_shoot()
+    enemy = enemies[flr(rnd(#enemies)) + 1]
+    local speed = 3
+    if enemy.dx < 0 then speed*=-1 end
+    local b = {
+        sp=129,
+        x=enemy.x,
+        y=enemy.y,
+        dx=speed,
+        dy=0,
+        box = {x1=2,y1=0,x2=5,y2=4}
+    }
+    add(enemy_bullets,b)
+end
+
 function abs_box(s)
     local box = {}
     box.x1 = s.box.x1 + s.x
@@ -126,6 +142,14 @@ function _update()
             points += 1
             -- explode(e.x,e.y)
         end
+        end
+    end
+    for b in all(enemy_bullets) do
+        b.x+=b.dx
+        b.y+=b.dy
+        if b.x < 0 or b.x > 128 or
+        b.y < 0 or b.y > 128 then
+        del(bullets,b)
         end
     end
     for e in all(enemies) do
@@ -169,8 +193,11 @@ function _update()
     -- camera(cam_x,0)
     printh(#enemies)
     ⧗=time()
-    if ⧗ % 2 == 0 then
+    if ⧗ % 2 == 0 then -- spawn every 2 seconds
         respawn_enemies()
+    end
+    if ⧗ % 3 == 0 then -- enemy shoot every 3 seconds
+        enemy_shoot()
     end
 end
 
@@ -193,6 +220,9 @@ function _draw()
     map(0,0)
     draw_player()
     for b in all(bullets) do
+        spr(b.sp,b.x,b.y)
+    end
+    for b in all(enemy_bullets) do
         spr(b.sp,b.x,b.y)
     end
     for e in all(enemies) do
