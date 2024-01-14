@@ -54,12 +54,16 @@ function game_over()
 end
 
 function update_over()
-
+    if btnp(4) then
+        _init()
+    end
 end
 
 function draw_over()
     cls()
     print("game over",50,50,4)
+    print("final score: "..points,50,60,4)
+    print("-- press o to start over --",10,80,4)
 end
 
 
