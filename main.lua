@@ -3,6 +3,7 @@
 function _init()
     player={
         sps={1,2,17,18},
+        t=0,
         x=59,
         y=59,
         w=16,
@@ -19,7 +20,10 @@ function _init()
         jumping=false,
         falling=false,
         sliding=false,
-        landed=false
+        landed=false,
+        invinsible=false,
+        dying=false,
+        box = {x1=0,y1=0,x2=16,y2=16}
     }
     bullets = {}
     enemy_bullets={}
@@ -27,6 +31,7 @@ function _init()
     gravity=0.2
     friction=0.85
     points = 0
+    lifes=3
 
     --simple camera
     cam_x=0
@@ -34,6 +39,37 @@ function _init()
     --map limits
     map_start=0
     map_end=1024
+
+    start()
+end
+
+function start()
+    _update = update_game
+    _draw = draw_game
+end
+
+function game_over()
+    _update = update_over
+    _draw = draw_over
+end
+
+function update_over()
+
+end
+
+function draw_over()
+    cls()
+    print("game over",50,50,4)
+end
+
+
+function player_death()
+    lifes-=1
+    if lifes <=0 then
+        game_over()
+    end
+    player.invinsible=true
+    player.dying = true
 end
 
 function respawn_enemies()
@@ -126,7 +162,7 @@ end
 
 --update and draw
 
-function _update()
+function update_game()
     player_update()
     for b in all(bullets) do
         b.x+=b.dx
@@ -150,6 +186,9 @@ function _update()
         if b.x < 0 or b.x > 128 or
         b.y < 0 or b.y > 128 then
         del(bullets,b)
+        end
+        if collide(player,b) and not player.invinsible then
+            player_death()
         end
     end
     for e in all(enemies) do
@@ -178,6 +217,10 @@ function _update()
         e.x > 128 and e.dx > 0 then
             del(enemies,e)
         end
+
+        if collide(player,e) and not player.invinsible then
+            player_death()
+        end
     
     end
     -- player_animate()
@@ -191,7 +234,7 @@ function _update()
     --     cam_x=map_end-128
     -- end
     -- camera(cam_x,0)
-    printh(#enemies)
+    -- printh(#enemies)
     ⧗=time()
     if ⧗ % 2 == 0 then -- spawn every 2 seconds
         respawn_enemies()
@@ -199,6 +242,7 @@ function _update()
     if ⧗ % 3 == 0 then -- enemy shoot every 3 seconds
         enemy_shoot()
     end
+    printh(player.invinsible)
 end
 
 function draw_enemy(e)
@@ -215,7 +259,7 @@ function draw_player()
     spr(player.sps[4],player.x+8,player.y+8,1,1,player.flp)
 end
 
-function _draw()
+function draw_game()
     cls()
     map(0,0)
     draw_player()
@@ -227,6 +271,10 @@ function _draw()
     end
     for e in all(enemies) do
         draw_enemy(e)
+    end
+    print(points,9)
+    for i=1,lifes do
+        spr(130,80+10*i,3)
     end
 end
 
@@ -280,17 +328,31 @@ end
 --player
 
 function player_update()
+
+    if player.invinsible then
+        player.t+=1
+        if player.t > 60 and player.dying then -- dying delay
+            player.dying = false
+            player.x=59
+            player.y=59
+        end
+        if player.t > 120 then -- invinsibility delay after respawn
+            player.invinsible = false
+            player.t = 0
+        end
+    end
+
     --physics
     player.dy+=gravity
     player.dx*=friction
 
     --controls
-    if btn(⬅️) then
+    if btn(⬅️) and not player.dying then
         player.dx-=player.acc
         player.running=true
         player.flp=true
     end
-    if btn(➡️) then
+    if btn(➡️) and not player.dying then
         player.dx+=player.acc
         player.running=true
         player.flp=false
@@ -307,13 +369,13 @@ function player_update()
     end
 
     --jump
-    if btnp(❎)
+    if btnp(❎) and not player.dying
     and player.landed then
         player.dy-=player.boost
         player.landed=false
     end
 
-    if btnp(🅾️) and #bullets <3 then
+    if btnp(🅾️) and #bullets <3 and not player.dying then
         shoot(player.flp)
     end
 
