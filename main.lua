@@ -35,15 +35,27 @@ function _init()
 end
 
 function respawn_enemies()
-    -- local d = -1
-    -- local h = 0
-    -- if rnd(1)<0.5 then d=1 end
+    local dir = -1
+    local h = 0
+    local seed = rnd(1)
+    local x = 0
+    if seed<0.5 then 
+        dir=1
+        x = 128
+    end
+
+    if seed < 0.3 then
+        h = 1
+    elseif seed < 0.6 then
+        h = 2
+    end
+    
     add(enemies, {
         sps={192,193,208,209},
-        dx=-2,
+        dx=-1*dir,
         dy=0,
-        x=128,
-        y=30,
+        x=x,
+        y=40*h,
         r=30,
         w=16,
         h=16,
@@ -52,7 +64,6 @@ function respawn_enemies()
         falling=false,
         sliding=false,
         landed=false,
-        flp=false,
         max_dx=2,
         max_dy=3,
         box = {x1=0,y1=0,x2=7,y2=7}
@@ -95,9 +106,6 @@ function _update()
     end
     for e in all(enemies) do
         e.dy+=gravity
-        e.dx*=friction
-
-        e.dx-=0.5
 
         if e.dy>0 then
             e.falling=true
@@ -117,6 +125,11 @@ function _update()
 
         e.x+=e.dx
         e.y+=e.dy
+
+        if (e.x+16) < 0 and e.dx < 0 or
+        e.x > 128 and e.dx > 0 then
+            del(enemies,e)
+        end
     
     end
     -- player_animate()
@@ -130,7 +143,7 @@ function _update()
     --     cam_x=map_end-128
     -- end
     -- camera(cam_x,0)
-    -- printh(#bullets)
+    printh(#enemies)
     ⧗=time()
     if ⧗ % 2 == 0 then
         respawn_enemies()
