@@ -25,6 +25,7 @@ function _init()
     enemies = {}
     gravity=0.2
     friction=0.85
+    points = 0
 
     --simple camera
     cam_x=0
@@ -66,7 +67,7 @@ function respawn_enemies()
         landed=false,
         max_dx=2,
         max_dy=3,
-        box = {x1=0,y1=0,x2=7,y2=7}
+        box = {x1=0,y1=0,x2=16,y2=16}
     })
     -- printh("new enemy")
 end
@@ -85,6 +86,28 @@ function shoot(flp)
     add(bullets,b)
 end
 
+function abs_box(s)
+    local box = {}
+    box.x1 = s.box.x1 + s.x
+    box.y1 = s.box.y1 + s.y
+    box.x2 = s.box.x2 + s.x
+    box.y2 = s.box.y2 + s.y
+    return box
+end
+
+function collide(a,b)
+    local box_a = abs_box(a)
+    local box_b = abs_box(b)
+
+    if box_a.x1 > box_b.x2 or
+        box_a.y1 > box_b.y2 or
+        box_b.x1 > box_a.x2 or
+        box_b.y1 > box_a.y2 then
+        return false
+    end
+    return true
+end
+
 --update and draw
 
 function _update()
@@ -96,13 +119,14 @@ function _update()
         b.y < 0 or b.y > 128 then
         del(bullets,b)
         end
-        -- for e in all(enemies) do
-        -- if col(b,e) then
-        --     del(enemies,e)
-        --     ship.p += 1
-        --     explode(e.x,e.y)
-        -- end
-        -- end
+        for e in all(enemies) do
+        if collide(b,e) then
+            del(enemies,e)
+            del(bullets,b)
+            points += 1
+            -- explode(e.x,e.y)
+        end
+        end
     end
     for e in all(enemies) do
         e.dy+=gravity
