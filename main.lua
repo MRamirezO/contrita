@@ -2,7 +2,7 @@
 
 function _init()
     player={
-        sp=1,
+        sps={1,2,17,18},
         x=59,
         y=59,
         w=16,
@@ -22,6 +22,7 @@ function _init()
         landed=false
     }
     bullets = {}
+    enemies = {}
     gravity=0.2
     friction=0.85
 
@@ -31,6 +32,32 @@ function _init()
     --map limits
     map_start=0
     map_end=1024
+end
+
+function respawn_enemies()
+    -- local d = -1
+    -- local h = 0
+    -- if rnd(1)<0.5 then d=1 end
+    add(enemies, {
+        sps={192,193,208,209},
+        dx=-2,
+        dy=0,
+        x=128,
+        y=30,
+        r=30,
+        w=16,
+        h=16,
+        running=false,
+        jumping=false,
+        falling=false,
+        sliding=false,
+        landed=false,
+        flp=false,
+        max_dx=2,
+        max_dy=3,
+        box = {x1=0,y1=0,x2=7,y2=7}
+    })
+    -- printh("new enemy")
 end
 
 function shoot(flp)
@@ -66,6 +93,32 @@ function _update()
         -- end
         -- end
     end
+    for e in all(enemies) do
+        e.dy+=gravity
+        e.dx*=friction
+
+        e.dx-=0.5
+
+        if e.dy>0 then
+            e.falling=true
+            e.landed=false
+            e.jumping=false
+    
+            e.dy=limit_speed(e.dy,e.max_dy)
+    
+            if collide_map(e,"down",0) then
+            e.landed=true
+            e.falling=false
+            e.dy=0
+            e.y-=((e.y+e.h+1)%8)-1
+            end
+        end
+
+
+        e.x+=e.dx
+        e.y+=e.dy
+    
+    end
     -- player_animate()
 
     --simple camera
@@ -78,19 +131,35 @@ function _update()
     -- end
     -- camera(cam_x,0)
     -- printh(#bullets)
+    ⧗=time()
+    if ⧗ % 2 == 0 then
+        respawn_enemies()
+    end
+end
+
+function draw_enemy(e)
+    spr(e.sps[1],e.x,e.y,1,1,e.flp)
+    spr(e.sps[2],e.x+8,e.y,1,1,e.flp)
+    spr(e.sps[3],e.x,e.y+8,1,1,e.flp)
+    spr(e.sps[4],e.x+8,e.y+8,1,1,e.flp)
+end
+
+function draw_player()
+    spr(player.sps[1],player.x,player.y,1,1,player.flp)
+    spr(player.sps[2],player.x+8,player.y,1,1,player.flp)
+    spr(player.sps[3],player.x,player.y+8,1,1,player.flp)
+    spr(player.sps[4],player.x+8,player.y+8,1,1,player.flp)
 end
 
 function _draw()
     cls()
     map(0,0)
-    spr(player.sp,player.x,player.y,1,1,player.flp)
-    spr(2,player.x+8,player.y,1,1,player.flp)
-    spr(17,player.x,player.y+8,1,1,player.flp)
-    spr(18,player.x+8,player.y+8,1,1,player.flp)
-    spr(33,player.x,player.y+16,1,1,player.flp)
-    spr(34,player.x+8,player.y+16,1,1,player.flp)
+    draw_player()
     for b in all(bullets) do
         spr(b.sp,b.x,b.y)
+    end
+    for e in all(enemies) do
+        draw_enemy(e)
     end
 end
 
