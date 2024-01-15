@@ -146,7 +146,6 @@ function update_game()
     if ⧗ % 3 == 0 then -- enemy shoot every 3 seconds
         enemy_shoot()
     end
-    printh(player.invinsible)
 end
 
 function draw_game()
