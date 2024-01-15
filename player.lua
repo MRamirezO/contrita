@@ -89,7 +89,11 @@ function player_update()
     --jump
     if btnp(❎) and not player.dying
     and player.landed then
-        player.dy-=player.boost
+        if btn(⬇️) then
+            player.y+=7
+        else
+            player.dy-=player.boost
+        end
         player.landed=false
     end
 
@@ -106,10 +110,10 @@ function player_update()
         player.dy=limit_speed(player.dy,player.max_dy)
 
         if collide_map(player,"down",0) then
-        player.landed=true
-        player.falling=false
-        player.dy=0
-        player.y-=((player.y+player.h+1)%8)-1
+            player.landed=true
+            player.falling=false
+            player.dy=0
+            player.y-=((player.y+player.h+1)%8)-1
         end
     elseif player.dy<0 then
         player.jumping=true
@@ -153,6 +157,9 @@ function player_update()
     end
     if player.x>map_end-player.w then
         player.x=map_end-player.w
+    end
+    if player.y>map_end and not player.invinsible then
+        player_death()
     end
 end
 

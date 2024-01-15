@@ -36,7 +36,7 @@ function _init()
 
     --map limits
     map_start=0
-    map_end=1024
+    map_end=128
 
     start()
 end
