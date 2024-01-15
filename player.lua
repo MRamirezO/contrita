@@ -29,8 +29,8 @@ function shoot(flp)
 
     local b = {
         sp=128,
-        x=player.x,
-        y=player.y,
+        x=player.x+4,
+        y=player.y+4,
         dx=x_speed,
         dy=y_speed,
         box = {x1=2,y1=0,x2=5,y2=4}
@@ -39,10 +39,26 @@ function shoot(flp)
 end
 
 function draw_player()
-    spr(player.sps[1],player.x,player.y,1,1,player.flp)
-    spr(player.sps[2],player.x+8,player.y,1,1,player.flp)
-    spr(player.sps[3],player.x,player.y+8,1,1,player.flp)
-    spr(player.sps[4],player.x+8,player.y+8,1,1,player.flp)
+    if player.dying then
+        player.sps={13,14,29,30}
+    elseif btn(⬆️) then
+        if player.running then player.sps={5,6,21,22} else player.sps={7,8,23,24} end
+    elseif btn(⬇️) then
+        if player.running then player.sps={11,12,27,28} else player.sps={9,10,25,26} end
+    else
+        player.sps={3,4,19,20}
+    end
+    if player.flp then
+        spr(player.sps[2],player.x,player.y,1,1,player.flp)
+        spr(player.sps[1],player.x+8,player.y,1,1,player.flp)
+        spr(player.sps[4],player.x,player.y+8,1,1,player.flp)
+        spr(player.sps[3],player.x+8,player.y+8,1,1,player.flp)
+    else
+        spr(player.sps[1],player.x,player.y,1,1,player.flp)
+        spr(player.sps[2],player.x+8,player.y,1,1,player.flp)
+        spr(player.sps[3],player.x,player.y+8,1,1,player.flp)
+        spr(player.sps[4],player.x+8,player.y+8,1,1,player.flp)
+    end
 end
 
 function player_update()

@@ -1,6 +1,6 @@
 function _init()
     player={
-        sps={1,2,17,18},
+        sps={3,4,19,20},
         t=0,
         x=59,
         y=59,
@@ -143,7 +143,7 @@ function update_game()
     if ⧗ % 2 == 0 then -- spawn every 2 seconds
         respawn_enemies()
     end
-    if ⧗ % 3 == 0 then -- enemy shoot every 3 seconds
+    if ⧗ % 3 == 0 and #enemies>=1 then -- enemy shoot every 3 seconds
         enemy_shoot()
     end
 end
