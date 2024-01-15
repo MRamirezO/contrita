@@ -36,8 +36,8 @@ function respawn_enemies()
 end
 
 function enemy_shoot()
-    local num = flr(rnd(#enemies)) + 1
-    local enemy = enemies[num]
+    -- local num = flr(rnd(#enemies)) + 1
+    local enemy = enemies[#enemies]
     local speed = 3
     if enemy.dx < 0 then speed*=-1 end
     local b = {

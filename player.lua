@@ -9,14 +9,30 @@ function player_death()
 end
 
 function shoot(flp)
-    local speed = 3
-    if flp then speed*=-1 end
+    local x_speed = 3
+    local y_speed = 0
+
+    if btn(⬆️) then
+        y_speed=-3
+        if btn(➡️) then x_speed = 3
+        elseif btn(⬅️) then x_speed = -3
+        else x_speed = 0 end
+    elseif btn(⬇️) then
+        y_speed=3
+        if btn(➡️) then x_speed = 3
+        elseif btn(⬅️) then x_speed = -3
+        else x_speed = 0 end
+    else
+        if flp then x_speed = -3 end
+    end
+
+
     local b = {
         sp=128,
         x=player.x,
         y=player.y,
-        dx=speed,
-        dy=0,
+        dx=x_speed,
+        dy=y_speed,
         box = {x1=2,y1=0,x2=5,y2=4}
     }
     add(bullets,b)
