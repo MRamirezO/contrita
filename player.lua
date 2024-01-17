@@ -11,7 +11,7 @@ end
 function shoot(flp)
     local x_speed = 3
     local y_speed = 0
-
+    sfx(1)
     if btn(⬆️) then
         y_speed=-3
         if btn(➡️) then x_speed = 3

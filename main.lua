@@ -80,6 +80,7 @@ function update_game()
             del(enemies,e)
             del(bullets,b)
             points += 1
+            sfx(0)
             -- explode(e.x,e.y)
         end
         end
@@ -125,10 +126,8 @@ function update_game()
         if collide(player,e) and not player.invinsible then
             player_death()
         end
-    
+        enemy_animate(e)
     end
-    -- player_animate()
-
     --simple camera
     -- cam_x=player.x-64+(player.w/2)
     -- if cam_x<map_start then
