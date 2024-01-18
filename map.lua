@@ -42,3 +42,21 @@ function collide_map(obj,aim,flag)
     end
 
 end
+
+function draw_shots()
+    local speed = 2
+    local spread = 2.5
+    for s in all(shots) do
+        circfill(s.x+s.t,s.y-s.t,0,8)
+        circfill(s.x,s.y-s.t,0,8)
+        circfill(s.x-s.t,s.y-s.t,0,8)
+        circfill(s.x+s.t*speed,s.y+s.t,2,8)
+        circfill(s.x-s.t*speed,s.y+s.t,2,8)
+        circfill(s.x,s.y+s.t,3,8)
+        circfill(s.x+s.t*speed,s.y,0,2)
+        circfill(s.x-s.t*speed,s.y,0,2)
+        if s.t < spread then
+            s.t+=0.6
+        end        
+    end
+end

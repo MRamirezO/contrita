@@ -32,6 +32,8 @@ function respawn_enemies()
         landed=false,
         max_dx=2,
         max_dy=3,
+        t=0,
+        dead=false,
         box = {x1=0,y1=0,x2=16,y2=16}
     })
     -- printh("new enemy")

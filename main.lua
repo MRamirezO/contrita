@@ -26,6 +26,7 @@ function _init()
     bullets = {}
     enemy_bullets={}
     enemies = {}
+    shots = {}
     gravity=0.2
     friction=0.85
     points = 0
@@ -76,8 +77,15 @@ function update_game()
         del(bullets,b)
         end
         for e in all(enemies) do
-        if collide(b,e) then
-            del(enemies,e)
+        if collide(b,e) and not e.dead then
+            local s = {
+                x=e.x+8,
+                y=e.y+16,
+                t=0
+            }
+            add(shots,s)
+            e.dead=true
+            e.sps={200,201,216,217}
             del(bullets,b)
             points += 1
             sfx(0)
@@ -113,20 +121,27 @@ function update_game()
             e.y-=((e.y+e.h+1)%8)-1
             end
         end
-
-
-        e.x+=e.dx
-        e.y+=e.dy
+        
+        if not e.dead then
+            e.x+=e.dx
+            e.y+=e.dy
+            enemy_animate(e)
+        else
+            e.t+=1
+            if e.t > 60 then -- dying delay
+                del(enemies,e)
+            end
+        end
 
         if (e.x+16) < 0 and e.dx < 0 or
         e.x > 128 and e.dx > 0 then
             del(enemies,e)
         end
 
-        if collide(player,e) and not player.invinsible then
+        if collide(player,e) and not player.invinsible and not e.dead then
             player_death()
         end
-        enemy_animate(e)
+        
     end
     --simple camera
     -- cam_x=player.x-64+(player.w/2)
@@ -150,6 +165,7 @@ end
 function draw_game()
     cls()
     map(0,0)
+    draw_shots()
     draw_player()
     for b in all(bullets) do
         spr(b.sp,b.x,b.y)
