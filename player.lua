@@ -3,8 +3,10 @@ function player_death()
     lifes-=1
     if lifes <=0 then
         game_over()
+    else
+        sfx(2)
+        player.invinsible=true
     end
-    player.invinsible=true
     player.dying = true
 end
 
@@ -14,14 +16,14 @@ function shoot(flp)
     sfx(1)
     if btn(⬆️) then
         y_speed=-3
-        if btn(➡️) then x_speed = 3
-        elseif btn(⬅️) then x_speed = -3
-        else x_speed = 0 end
+        -- if btn(➡️) then x_speed = 3
+        -- elseif btn(⬅️) then x_speed = -3
+        x_speed = 0
     elseif btn(⬇️) then
         y_speed=3
-        if btn(➡️) then x_speed = 3
-        elseif btn(⬅️) then x_speed = -3
-        else x_speed = 0 end
+        -- if btn(➡️) then x_speed = 3
+        -- elseif btn(⬅️) then x_speed = -3
+        x_speed = 0
     else
         if flp then x_speed = -3 end
     end
@@ -39,15 +41,6 @@ function shoot(flp)
 end
 
 function draw_player()
-    if player.dying then
-        player.sps={13,14,29,30}
-    elseif btn(⬆️) then
-        if player.running then player.sps={5,6,21,22} else player.sps={7,8,23,24} end
-    elseif btn(⬇️) then
-        if player.running then player.sps={11,12,27,28} else player.sps={9,10,25,26} end
-    else
-        player.sps={3,4,19,20}
-    end
     if player.flp then
         spr(player.sps[2],player.x,player.y,1,1,player.flp)
         spr(player.sps[1],player.x+8,player.y,1,1,player.flp)
@@ -69,6 +62,7 @@ function player_update()
             player.dying = false
             player.x=59
             player.y=59
+            sfx(3)
         end
         if player.t > 120 then -- invinsibility delay after respawn
             player.invinsible = false
@@ -82,14 +76,18 @@ function player_update()
 
     --controls
     if btn(⬅️) and not player.dying then
-        player.dx-=player.acc
-        player.running=true
-        player.flp=true
+        if (not btn(⬆️) and not btn(⬇️)) or player.jumping then
+            player.dx-=player.acc
+            player.running=true
+            player.flp=true
+        end
     end
     if btn(➡️) and not player.dying then
-        player.dx+=player.acc
-        player.running=true
-        player.flp=false
+        if (not btn(⬆️) and not btn(⬇️)) or player.jumping then
+            player.dx+=player.acc
+            player.running=true
+            player.flp=false
+        end
     end
 
     --slide
@@ -166,6 +164,7 @@ function player_update()
 
     player.x+=player.dx
     player.y+=player.dy
+    player_animate()
 
     --limit player to map
     if player.x<map_start then
@@ -177,30 +176,52 @@ function player_update()
     if player.y>map_end and not player.invinsible then
         player_death()
     end
+    
 end
 
--- function player_animate()
---     if player.jumping then
---         player.sp=7
---     elseif player.falling then
---         player.sp=8
---     elseif player.sliding then
---         player.sp=9
---     elseif player.running then
---         if time()-player.anim>.1 then
---         player.anim=time()
---         player.sp+=1
---         if player.sp>6 then
---             player.sp=3
---         end
---         end
---     else --player idle
---         if time()-player.anim>.3 then
---         player.anim=time()
---         player.sp+=1
---         if player.sp>2 then
---             player.sp=1
---         end
---         end
---     end
--- end
+function player_animate()
+    local idle_sprites = {
+        {1,2,17,18},
+        {3,4,19,20},
+        {5,6,21,22}
+    }
+    local running_sprites = {
+        {1,2,17,18},
+        {7,8,23,24},
+        {9,10,25,26},
+        {11,12,27,28},
+        {13,14,29,30}
+    }
+
+    if player.dying then
+        player.sps={46,47,62,63}
+    elseif btn(⬆️) then
+        player.sps={33,34,49,50}
+    elseif btn(⬇️) then
+        player.sps={35,36,51,52}
+    elseif player.running then
+        if time()-player.anim>.3 then
+            if player.frame>=5 then
+                player.frame=1
+            else
+                player.frame+=1
+            end
+            player.sps=running_sprites[player.frame]
+            player.anim=time()
+        elseif player.invinsible then
+            player.sps={16,16,16,16}
+        end
+    else --player idle
+        if time()-player.anim>.3 then
+            if player.frame>=3 then
+                player.frame=1
+            else
+                player.frame+=1
+            end
+            player.sps=idle_sprites[player.frame]
+            player.anim=time()
+        elseif player.invinsible then
+            player.sps={16,16,16,16}
+        end
+    end
+end

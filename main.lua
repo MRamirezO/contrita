@@ -1,6 +1,6 @@
 function _init()
     player={
-        sps={3,4,19,20},
+        sps={1,2,17,18},
         t=0,
         x=59,
         y=59,
@@ -14,6 +14,7 @@ function _init()
         acc=0.5,
         boost=4,
         anim=0,
+        frame=1,
         running=false,
         jumping=false,
         falling=false,
@@ -21,7 +22,7 @@ function _init()
         landed=false,
         invinsible=false,
         dying=false,
-        box = {x1=0,y1=0,x2=16,y2=16}
+        box = {x1=4,y1=4,x2=10,y2=15}
     }
     bullets = {}
     enemy_bullets={}
@@ -48,6 +49,7 @@ function start()
 end
 
 function game_over()
+    sfx(4)
     _update = update_over
     _draw = draw_over
 end
@@ -60,9 +62,13 @@ end
 
 function draw_over()
     cls()
-    print("game over",50,50,4)
-    print("final score: "..points,50,60,4)
+    print("game over",40,50,4)
+    print("final score: "..points,40,60,4)
     print("-- press o to start over --",10,80,4)
+    player.sps={46,47,62,63}
+    player.x=59
+    player.y=100
+    draw_player()
 end
 
 --update and draw
