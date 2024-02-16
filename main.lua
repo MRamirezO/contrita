@@ -46,10 +46,12 @@ end
 function start()
     _update = update_game
     _draw = draw_game
+    music()
 end
 
 function game_over()
     sfx(4)
+    music(-1)
     _update = update_over
     _draw = draw_over
 end
