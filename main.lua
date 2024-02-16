@@ -84,6 +84,7 @@ function update_game()
         end
         for e in all(enemies) do
         if collide(b,e) and not e.dead then
+            if #shots >= 30 then deli(shots,1) end
             local s = {
                 x=e.x+8,
                 y=e.y+16,
