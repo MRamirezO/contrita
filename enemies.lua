@@ -44,15 +44,17 @@ function enemy_shoot()
     local enemy = enemies[#enemies]
     local speed = 3
     if enemy.dx < 0 then speed*=-1 end
-    local b = {
-        sp=129,
-        x=enemy.x+4,
-        y=enemy.y+4,
-        dx=speed,
-        dy=0,
-        box = {x1=2,y1=0,x2=5,y2=4}
-    }
-    add(enemy_bullets,b)
+    if not enemy.dead then
+        local b = {
+            sp=129,
+            x=enemy.x+4,
+            y=enemy.y+4,
+            dx=speed,
+            dy=0,
+            box = {x1=2,y1=0,x2=5,y2=4}
+        }
+        add(enemy_bullets,b)
+    end
 end
 
 function draw_enemy(e)
