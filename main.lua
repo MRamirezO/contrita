@@ -40,13 +40,29 @@ function _init()
     map_start=0
     map_end=128
 
-    start()
+    main_menu()
 end
 
 function start()
     _update = update_game
     _draw = draw_game
     music()
+end
+
+function main_menu()
+    _update = update_menu
+    _draw = draw_menu
+end
+
+function update_menu()
+    if btnp(🅾️) or btnp(❎) then
+        start()
+    end
+end
+
+function draw_menu()
+    map(16,0)
+    print("-- press any button to start --",2,120,5)
 end
 
 function game_over()
@@ -57,7 +73,7 @@ function game_over()
 end
 
 function update_over()
-    if btnp(4) then
+    if btnp(🅾️) or btnp(❎) then
         _init()
     end
 end
@@ -66,7 +82,7 @@ function draw_over()
     cls()
     print("game over",40,50,4)
     print("final score: "..points,40,60,4)
-    print("-- press o to start over --",10,80,4)
+    print(" press any button to start over ",2,80,3)
     player.sps={46,47,62,63}
     player.x=59
     player.y=100

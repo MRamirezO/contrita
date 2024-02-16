@@ -101,7 +101,7 @@ function player_update()
     end
 
     --jump
-    if btnp(❎) and not player.dying
+    if btnp(🅾️) and not player.dying
     and player.landed then
         if btn(⬇️) then
             player.y+=7
@@ -111,7 +111,7 @@ function player_update()
         player.landed=false
     end
 
-    if btnp(🅾️) and #bullets <3 and not player.dying then
+    if btnp(❎) and #bullets <3 and not player.dying then
         shoot(player.flp)
     end
 
